@@ -53,4 +53,21 @@ const redirectUrl = async function (req, res) {
     }
 }
 
-module.exports = { redirectUrl, createUrl };
+const getStats = async (req, res) => {
+    try {
+        const { code } = req.params;
+        const urlDoc = await Url.findOne({ urlcode: code });
+        if (!urlDoc) {
+            return res.status(404).json({ error: 'URL not found' });
+        }
+        res.json({
+            originalUrl: urlDoc.originalUrl,
+            accessCount: urlDoc.count,
+            urlcode: urlDoc.urlcode
+        });
+    } catch (err) {
+        return res.status(500).json({ error: 'Error retrieving stats' });
+    }
+}
+
+module.exports = { redirectUrl, createUrl, getStats };
